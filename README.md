@@ -30,10 +30,6 @@ This is a Simple Student Management System Developed for Educational Purpose usi
 
 
 ## Support Developer
-1. Subscribe & Share my YouTube Channel - https://bit.ly/vijay-thapa-online-courses
-2. Add a Star 🌟  to this 👆 Repository
-
-
 ## Donate
 
 ## How to Install and Run this project?
