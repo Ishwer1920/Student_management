@@ -1,0 +1,104 @@
+{% extends 'hod_template/base_template.html' %}
+
+{% block page_title %}
+    Add Student
+{% endblock page_title %}
+
+{% block main_content %}
+
+{% load static %}
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <!-- general form elements -->
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Add Student</h3>
+                    </div>
+                    <!-- form start -->
+                    {% url 'add_student_save' as action_path %}
+                    {% include 'hod_template/form_template.html' with messages=messages form=form action_path=action_path button_text="Add Student" %}
+                </div>
+                <!-- /.card -->
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+
+{% endblock main_content %}
+
+{% block custom_js %}
+<script>
+    $(document).ready(function() {
+
+        // Helper: Email format validation
+        function isValidEmail(email) {
+            var email_regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return email_regex.test(email);
+        }
+
+        // First name and last name should allow only letters and spaces
+        $('#id_first_name, #id_last_name').on('input', function() {
+            let clean = $(this).val().replace(/[^A-Za-z\s]/g, '');
+            $(this).val(clean);
+        });
+
+        // Email availability check
+        $("#id_email").keyup(function() {
+            var email = $(this).val();
+            $(".email_error").remove();
+
+            if (isValidEmail(email)) {
+                $.ajax({
+                    url: '{% url "check_email_exist" %}',
+                    type: 'POST',
+                    data: {
+                        email: email,
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    success: function(response) {
+                        if (response == "True") {
+                            $("<span class='email_error' style='color: red; padding: 5px; font-weight: bold;'> Email Not Available. </span>").insertAfter("#id_email");
+                        } else {
+                            $("<span class='email_error' style='color: green; padding: 5px; font-weight: bold;'> Email Available. </span>").insertAfter("#id_email");
+                        }
+                    },
+                    error: function() {
+                        console.log("Failed to check email.");
+                    }
+                });
+            }
+        });
+
+        // Username availability check
+        $("#id_username").keyup(function() {
+            var username = $(this).val();
+            $(".username_error").remove();
+
+            if (username != "") {
+                $.ajax({
+                    url: '{% url "check_username_exist" %}',
+                    type: 'POST',
+                    data: {
+                        username: username,
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    success: function(response) {
+                        if (response == "True") {
+                            $("<span class='username_error' style='color: red; padding: 5px; font-weight: bold;'> Username Not Available. </span>").insertAfter("#id_username");
+                        } else {
+                            $("<span class='username_error' style='color: green; padding: 5px; font-weight: bold;'> Username Available. </span>").insertAfter("#id_username");
+                        }
+                    },
+                    error: function() {
+                        console.log("Failed to check username.");
+                    }
+                });
+            }
+        });
+
+    });
+</script>
+{% endblock custom_js %}

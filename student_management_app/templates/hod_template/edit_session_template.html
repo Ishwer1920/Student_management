@@ -1,0 +1,107 @@
+{% extends 'hod_template/base_template.html' %}
+
+{% block page_title %}
+    Edit Session Year
+{% endblock page_title %}
+
+{% block main_content %}
+
+{% load static %}
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <!-- general form elements -->
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Edit Session Year</h3>
+                    </div>
+                    <!-- form start -->
+                    <form role="form" method="POST" action="{% url 'edit_session_save' %}">
+                        {% csrf_token %}
+
+                        {% if messages %}
+                        <div class="form-group">
+                            <div class="col-12">
+                                {% for message in messages %}
+                                {% if message.tags == "error" %}
+                                    <div class="alert alert-danger alert-dismissible fade show" role="alert" style="margin-top: 10px;">
+                                        {{ message }}
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                {% elif message.tags == "success" %}
+                                    <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-top: 10px;">
+                                        {{ message }}
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label>Session Start Year</label>
+                                <input type="date" class="form-control" name="session_start_year" id="session_start_year" value="{{ session_year.session_start_year|date:'Y-m-d' }}">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Session End Year</label>
+                                <input type="date" class="form-control" name="session_end_year" id="session_end_year" value="{{ session_year.session_end_year|date:'Y-m-d' }}">
+                            </div>
+                        </div>
+
+                        <div class="card-footer">
+                            <input type="hidden" name="session_id" value="{{ session_year.id }}" />
+                            <button type="submit" class="btn btn-primary">Update Session Year</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock main_content %}
+
+{% block custom_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const startDateInput = document.getElementById('session_start_year');
+        const endDateInput = document.getElementById('session_end_year');
+
+        // Set today's date
+        const today = new Date().toISOString().split('T')[0];
+        startDateInput.min = today;
+
+        // Function to update end date min
+        function updateEndDateMin() {
+            if (startDateInput.value) {
+                const startDate = new Date(startDateInput.value);
+                const minEndDate = new Date(startDate);
+                minEndDate.setDate(minEndDate.getDate() + 1);
+                const minEndDateStr = minEndDate.toISOString().split('T')[0];
+                endDateInput.min = minEndDateStr;
+
+                if (endDateInput.value && endDateInput.value < minEndDateStr) {
+                    endDateInput.value = '';
+                }
+            }
+        }
+
+        // Trigger on start date change
+        startDateInput.addEventListener('change', updateEndDateMin);
+
+        // Run on load in case values are prefilled
+        if (startDateInput.value) {
+            updateEndDateMin();
+        }
+    });
+</script>
+{% endblock custom_js %}

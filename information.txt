@@ -1,0 +1,35 @@
+Student
+ID:- student@gmail.com
+P/W: student
+
+Staff
+ID:- staff@gmail.com
+P/W: staff
+
+
+Admin
+
+1)
+
+ID:- admin@gmail.com
+P/W: admin
+
+2)
+
+Username: newadmin@gmail.com
+Password: admin
+
+Step 1
+
+CustomUser.objects.create_superuser('newadmin@gmail.com', 'newadmin@gmail.com', 'admin')
+
+Step 2
+
+user = CustomUser.objects.get(username='newadmin@gmail.com')
+print(user)
+
+
+
+delete user
+old_user = CustomUser.objects.get(username='admin@gmail.com')
+old_user.delete()
